@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<!-- Short photo banner (same background as the homepage hero) -->
+<!-- Short photo banner -->
 <section class="hero-photo page-banner">
   <div class="container hero-content">
     <h1>Our cars</h1>
@@ -54,53 +54,50 @@
   </div>
 </section>
 
-<!-- Mosaic grid -->
+<!-- Car grid: same card markup and CSS as the homepage (.grid-3 / .car-card in style.css) -->
 <section class="section-mosaic">
   <div class="container">
-    <div class="mosaic">
+    <div class="grid-3">
 
       {% for vehicle in vehicles %}
-      <article class="m-card">
-        <div class="m-image">
+      <article class="car-card">
+        <div class="car-image">
           {% if vehicle.image %}
-            <img src="{{ vehicle.image.url }}" alt="{{ vehicle.name }}" onerror="this.remove()">
+            <img src="{{ vehicle.image.url }}" alt="{{ vehicle.name }}">
           {% else %}
-            <span class="m-placeholder">No image</span>
+            No image
           {% endif %}
-          <span class="badge m-badge">
-            <span class="dot {% if not vehicle.is_available %}dot-red{% endif %}"></span>
-            {% if vehicle.is_available %}Available{% else %}Booked{% endif %}
-          </span>
         </div>
-        <div class="m-body">
-          <span class="car-brand">{{ vehicle.brand.name }}</span>
-          <div class="m-row">
-            <h3 class="car-name">{{ vehicle.name }}</h3>
-            <span class="price">${{ vehicle.price_per_day }}<small> / day</small></span>
+        <div class="car-body">
+          <div class="car-top">
+            <span class="car-brand">{{ vehicle.brand.name }}</span>
+            <span class="badge">
+              <span class="dot {% if not vehicle.is_available %}dot-red{% endif %}"></span>
+              {% if vehicle.is_available %}Available{% else %}Booked{% endif %}
+            </span>
           </div>
-          <div class="m-row">
-            <span class="car-specs">{{ vehicle.seats }} seats &middot; {{ vehicle.fuel_type }} &middot; {{ vehicle.model_year }}</span>
+          <h3 class="car-name">{{ vehicle.name }}</h3>
+          <p class="car-specs">{{ vehicle.seats }} seats &middot; {{ vehicle.fuel_type }} &middot; {{ vehicle.model_year }}</p>
+          <div class="car-bottom">
+            <span class="price">${{ vehicle.price_per_day }}<small> / day</small></span>
             <a href="/vehicles/{{ vehicle.id }}/" class="btn btn-secondary btn-sm">Details</a>
           </div>
         </div>
       </article>
 
       {% empty %}
-        {% for i in "1234567" %}
-        {% cycle '1' '2' '3' '4' '5' '6' '1' as img silent %}
-        <article class="m-card">
-          <div class="m-image">
-            <img src="{% static 'images/cars/car-'|add:img|add:'.jpg' %}" alt="" onerror="this.remove()">
-            <span class="badge m-badge"><span class="dot"></span> Available</span>
-          </div>
-          <div class="m-body">
-            <span class="car-brand">Brand</span>
-            <div class="m-row">
-              <h3 class="car-name">Car name</h3>
-              <span class="price">$00<small> / day</small></span>
+        {% for i in "123456" %}
+        <article class="car-card">
+          <div class="car-image"><img src="{% static 'images/cars/car-'|add:i|add:'.jpg' %}" alt=""></div>
+          <div class="car-body">
+            <div class="car-top">
+              <span class="car-brand">Brand</span>
+              <span class="badge"><span class="dot"></span> Available</span>
             </div>
-            <div class="m-row">
-              <span class="car-specs">5 seats &middot; Petrol &middot; 2024</span>
+            <h3 class="car-name">Car name</h3>
+            <p class="car-specs">5 seats &middot; Petrol &middot; 2024</p>
+            <div class="car-bottom">
+              <span class="price">$00<small> / day</small></span>
               <a href="/vehicles/" class="btn btn-secondary btn-sm">Details</a>
             </div>
           </div>
