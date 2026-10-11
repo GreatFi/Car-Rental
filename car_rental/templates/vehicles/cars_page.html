@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cars | FastCars{% endblock %}
+
+{% block content %}
+
+<!-- Short photo banner (same background as the homepage hero) -->
+<section class="hero-photo page-banner">
+  <div class="container hero-content">
+    <h1>Our cars</h1>
+    <p class="hero-text">Pick a car, choose your dates, and book in minutes.</p>
+  </div>
+</section>
+
+<!-- Filters (overlap the bottom of the banner) -->
+<section class="overlap">
+  <div class="container">
+    <form class="filters" method="get">
+      <div class="field">
+        <label for="q">Search</label>
+        <input class="input" type="text" id="q" name="q" placeholder="Car name">
+      </div>
+      <div class="field">
+        <label for="brand">Brand</label>
+        <select class="input" id="brand" name="brand">
+          <option value="">All brands</option>
+          {% for brand in brands %}
+            <option value="{{ brand.id }}">{{ brand.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="fuel">Fuel</label>
+        <select class="input" id="fuel" name="fuel">
+          <option value="">Any</option>
+          <option>Petrol</option>
+          <option>Diesel</option>
+          <option>Electric</option>
+          <option>Hybrid</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="seats">Seats</label>
+        <select class="input" id="seats" name="seats">
+          <option value="">Any</option>
+          <option value="2">2+</option>
+          <option value="4">4+</option>
+          <option value="7">7+</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </form>
+  </div>
+</section>
+
+<!-- Mosaic grid -->
+<section class="section-mosaic">
+  <div class="container">
+    <div class="mosaic">
+
+      {% for vehicle in vehicles %}
+      <article class="m-card">
+        <div class="m-image">
+          {% if vehicle.image %}
+            <img src="{{ vehicle.image.url }}" alt="{{ vehicle.name }}" onerror="this.remove()">
+          {% else %}
+            <span class="m-placeholder">No image</span>
+          {% endif %}
+          <span class="badge m-badge">
+            <span class="dot {% if not vehicle.is_available %}dot-red{% endif %}"></span>
+            {% if vehicle.is_available %}Available{% else %}Booked{% endif %}
+          </span>
+        </div>
+        <div class="m-body">
+          <span class="car-brand">{{ vehicle.brand.name }}</span>
+          <div class="m-row">
+            <h3 class="car-name">{{ vehicle.name }}</h3>
+            <span class="price">${{ vehicle.price_per_day }}<small> / day</small></span>
+          </div>
+          <div class="m-row">
+            <span class="car-specs">{{ vehicle.seats }} seats &middot; {{ vehicle.fuel_type }} &middot; {{ vehicle.model_year }}</span>
+            <a href="/vehicles/{{ vehicle.id }}/" class="btn btn-secondary btn-sm">Details</a>
+          </div>
+        </div>
+      </article>
+
+      {% empty %}
+        {% for i in "1234567" %}
+        {% cycle '1' '2' '3' '4' '5' '6' '1' as img silent %}
+        <article class="m-card">
+          <div class="m-image">
+            <img src="{% static 'images/cars/car-'|add:img|add:'.jpg' %}" alt="" onerror="this.remove()">
+            <span class="badge m-badge"><span class="dot"></span> Available</span>
+          </div>
+          <div class="m-body">
+            <span class="car-brand">Brand</span>
+            <div class="m-row">
+              <h3 class="car-name">Car name</h3>
+              <span class="price">$00<small> / day</small></span>
+            </div>
+            <div class="m-row">
+              <span class="car-specs">5 seats &middot; Petrol &middot; 2024</span>
+              <a href="/vehicles/" class="btn btn-secondary btn-sm">Details</a>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      {% endfor %}
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

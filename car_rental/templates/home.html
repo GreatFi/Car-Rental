@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}DriveEase | Car Rental{% endblock %}
+
+{% block content %}
+
+<!-- Hero (photo background: static/images/hero.jpg) -->
+<section class="hero-photo">
+  <div class="container hero-content">
+    <span class="badge badge-dark"><span class="dot"></span> Cars available today</span>
+    <h1>Your next ride,<br>one booking away.</h1>
+    <p class="hero-text">
+      Browse the fleet, pick your dates and get confirmed. No hidden fees, no paperwork maze.
+    </p>
+    <div class="hero-actions">
+      <a href="/vehicles/" class="btn btn-light btn-lg">Browse cars</a>
+      {% if not user.is_authenticated %}
+        <a href="/accounts/register/" class="btn btn-ghost btn-lg">Create account</a>
+      {% endif %}
+    </div>
+    <ol class="hero-steps">
+      <li><span class="step-num">01</span> Browse</li>
+      <li><span class="step-num">02</span> Book</li>
+      <li><span class="step-num">03</span> Track</li>
+    </ol>
+  </div>
+</section>
+
+<!-- Quick search -->
+<section class="section-tight">
+  <div class="container">
+    <form class="search-card" method="get" action="/vehicles/">
+      <div class="field">
+        <label for="brand">Brand</label>
+        <select class="input" id="brand" name="brand">
+          <option value="">All brands</option>
+          {% for brand in brands %}
+            <option value="{{ brand.id }}">{{ brand.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="pickup">Pick-up date</label>
+        <input class="input" type="date" id="pickup" name="pickup">
+      </div>
+      <div class="field">
+        <label for="return">Return date</label>
+        <input class="input" type="date" id="return" name="return">
+      </div>
+      <div class="field">
+        <label for="seats">Seats</label>
+        <select class="input" id="seats" name="seats">
+          <option value="">Any</option>
+          <option value="2">2+</option>
+          <option value="4">4+</option>
+          <option value="7">7+</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+</section>
+
+<!-- Featured cars -->
+<section class="section">
+  <div class="container">
+    <div class="section-head section-head-row">
+      <div>
+        <h2 class="section-title">Featured cars</h2>
+        <p class="section-sub">Fresh on the lot and ready to book.</p>
+      </div>
+      <a href="/vehicles/" class="btn btn-secondary btn-sm">View all</a>
+    </div>
+
+    <div class="grid-3">
+      {% for vehicle in vehicles %}
+      <article class="car-card">
+        <div class="car-image">
+          {% if vehicle.image %}
+            <img src="{{ vehicle.image.url }}" alt="{{ vehicle.name }}">
+          {% else %}
+            No image
+          {% endif %}
+        </div>
+        <div class="car-body">
+          <div class="car-top">
+            <span class="car-brand">{{ vehicle.brand.name }}</span>
+            <span class="badge"><span class="dot"></span> Available</span>
+          </div>
+          <h3 class="car-name">{{ vehicle.name }}</h3>
+          <p class="car-specs">{{ vehicle.seats }} seats &middot; {{ vehicle.fuel_type }} &middot; {{ vehicle.model_year }}</p>
+          <div class="car-bottom">
+            <span class="price">${{ vehicle.price_per_day }}<small> / day</small></span>
+            <a href="/vehicles/{{ vehicle.id }}/" class="btn btn-secondary btn-sm">Details</a>
+          </div>
+        </div>
+      </article>
+      {% empty %}
+        {% for i in "123" %}
+        <article class="car-card">
+          <div class="car-image">Car image</div>
+          <div class="car-body">
+            <div class="car-top">
+              <span class="car-brand">Brand</span>
+              <span class="badge"><span class="dot"></span> Available</span>
+            </div>
+            <h3 class="car-name">Car name</h3>
+            <p class="car-specs">5 seats &middot; Petrol &middot; 2024</p>
+            <div class="car-bottom">
+              <span class="price">$00<small> / day</small></span>
+              <a href="/vehicles/" class="btn btn-secondary btn-sm">Details</a>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Bento: how it works -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2 class="section-title">Renting, simplified</h2>
+      <p class="section-sub">Everything you need, nothing you don't.</p>
+    </div>
+
+    <div class="bento">
+      <div class="bento-cell bento-wide">
+        <span class="step-num">How it works</span>
+        <h3 class="bento-title">Register. Pick. Book.</h3>
+        <ol class="bento-steps">
+          <li><span class="step-num">01</span><div><strong>Create an account</strong><p>Sign up with your email in under a minute.</p></div></li>
+          <li><span class="step-num">02</span><div><strong>Choose your car</strong><p>Filter by brand and dates, then open the details.</p></div></li>
+          <li><span class="step-num">03</span><div><strong>Get confirmed</strong><p>We confirm your booking and you can follow it anytime.</p></div></li>
+        </ol>
+      </div>
+
+      <div class="bento-cell">
+        <span class="step-num">Bookings</span>
+        <h3 class="bento-title">Track every trip</h3>
+        <ul class="status-list">
+          <li><span class="dot dot-orange"></span> Pending</li>
+          <li><span class="dot"></span> Confirmed</li>
+          <li><span class="dot dot-red"></span> Cancelled</li>
+        </ul>
+      </div>
+
+      <div class="bento-cell">
+        <span class="step-num">Support</span>
+        <h3 class="bento-title">Questions?</h3>
+        <p class="bento-text">Send us a message and we'll get back to you.</p>
+        <a href="/contact/" class="btn btn-secondary btn-sm">Contact us</a>
+      </div>
+
+      <div class="bento-cell bento-wide">
+        <span class="step-num">Reviews</span>
+        {% for t in testimonials|slice:":1" %}
+          <p class="bento-quote">&ldquo;{{ t.message }}&rdquo;</p>
+          <p class="quote-author">{{ t.user.get_full_name|default:t.user.username }}</p>
+        {% empty %}
+          <p class="bento-quote">&ldquo;Customer reviews show up here once users post and the admin activates them.&rdquo;</p>
+          <p class="quote-author">Customer name</p>
+        {% endfor %}
+        <a href="/testimonials/" class="btn btn-secondary btn-sm">Read more reviews</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dark call to action -->
+<section class="section">
+  <div class="container">
+    <div class="cta">
+      <div>
+        <h2 class="cta-title">Get new cars and offers first.</h2>
+        <p class="cta-text">Join the list. No spam, unsubscribe anytime.</p>
+      </div>
+      <form class="subscribe-form" method="post" action="/subscribe/">
+        {% csrf_token %}
+        <input class="input input-dark" type="email" name="email" placeholder="you@example.com" required aria-label="Email address">
+        <button type="submit" class="btn btn-light">Subscribe</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,91 @@
+/* ---------- Cars page ---------- */
+
+/* Short banner: reuses .hero-photo from style.css */
+.hero-photo.page-banner { padding: var(--space-16) 0 calc(var(--space-16) + var(--space-10)); background-image: url("https://images.pexels.com/photos/29566899/pexels-photo-29566899.jpeg");}
+
+/* Any section that should overlap the bottom of the banner */
+.overlap { position: relative; z-index: 2; margin-top: calc(var(--space-16) * -1); }
+
+.section-mosaic { padding-top: var(--space-8); }
+
+/* Filters */
+.filters {
+  padding: var(--space-4);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-medium);
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: var(--space-4);
+  align-items: end;
+}
+
+/* Mosaic: fixed row height, cards span 2 or 3 rows, "dense" fills the gaps */
+.mosaic {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 130px;
+  grid-auto-flow: dense;
+  gap: var(--space-6);
+}
+
+/* Photo fills the whole card, info panel floats on top of it */
+.m-card {
+  position: relative;
+  grid-row: span 2;
+  overflow: hidden;
+  background: var(--bg-recessed);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-small);
+}
+
+
+/* Pattern repeats every 7 cards and tiles a 3 x 6 block exactly, so there are no gaps.
+   Tall = 3 rows, the rest = 2 rows (set on .m-card above). */
+.m-card:nth-child(7n+1),
+.m-card:nth-child(7n+3),
+.m-card:nth-child(7n+5),
+.m-card:nth-child(7n+6) { grid-row: span 3; }
+
+.m-image { position: absolute; inset: 0; }
+.m-image img { width: 100%; height: 100%; object-fit: cover; }
+
+.m-placeholder {
+  position: absolute;
+  top: 38%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.m-badge { position: absolute; top: var(--space-3); left: var(--space-3); }
+
+.m-body {
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: var(--radius);
+  box-shadow: var(--border);
+}
+
+.m-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+
+@media (max-width: 960px) {
+  .mosaic { grid-template-columns: repeat(2, 1fr); }
+  .mosaic .m-card:nth-child(n) { grid-row: span 2; }
+  .filters { grid-template-columns: repeat(2, 1fr); }
+  .filters .btn { grid-column: 1 / -1; }
+}
+
+@media (max-width: 640px) {
+  .mosaic { grid-template-columns: 1fr; }
+  .filters { grid-template-columns: 1fr; }
+}
