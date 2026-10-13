@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | FastCars</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%232f4bff'/%3E%3Cpath d='M10.5 22l5-12M16.5 22l5-12' stroke='white' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+</head>
+<body>
+  <div class="auth">
+
+    <aside class="auth-media">
+      <a href="/" class="logo logo-light" aria-label="FastCars home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="10" fill="currentColor"/><path d="M10.5 22l5-12M16.5 22l5-12" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/></svg>
+        <span>FastCars</span>
+      </a>
+      <div class="auth-media-copy">
+        <p class="auth-media-title">Your next ride is a few clicks away.</p>
+        <p>Browse the fleet, book your dates and track every trip from one account.</p>
+      </div>
+    </aside>
+
+    <main class="auth-panel">
+      <div class="auth-body">
+        <a href="/" class="logo auth-logo-mobile" aria-label="FastCars home">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="10" fill="currentColor"/><path d="M10.5 22l5-12M16.5 22l5-12" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/></svg>
+          <span>FastCars</span>
+        </a>
+
+        <h1 class="auth-title">Create your account</h1>
+        <p class="auth-sub">It takes under a minute.</p>
+
+        <form method="post" class="auth-form">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="form-alert" role="alert">
+              {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+            </div>
+          {% endif %}
+
+          {% for field in form %}
+            <div class="field{% if field.errors %} has-error{% endif %}">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+              {% if field.help_text %}<div class="field-help">{{ field.help_text|safe }}</div>{% endif %}
+            </div>
+          {% endfor %}
+
+          <button type="submit" class="btn">Create account</button>
+        </form>
+
+        <p class="auth-switch">Already have an account? <a href="{% url 'accounts:login' %}" class="link">Log in</a></p>
+      </div>
+
+      <p class="auth-foot">&copy; {% now "Y" %} FastCars &middot; <a href="/contact/">Need help?</a></p>
+    </main>
+
+  </div>
+  <script src="{% static 'js/auth.js' %}" defer></script>
+</body>
+</html>

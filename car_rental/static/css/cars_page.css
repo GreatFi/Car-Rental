@@ -1,91 +1,145 @@
-/* ---------- Cars page ---------- */
+/* =========================================
+   CARS PAGE — built on the new token system
+   (.grid-3, .car-card, .field, .input,
+    .empty-state, .btn live in index.css)
+   ========================================= */
 
-/* Short banner: reuses .hero-photo from style.css */
-.hero-photo.page-banner { padding: var(--space-16) 0 calc(var(--space-16) + var(--space-10)); background-image: url("https://images.pexels.com/photos/29566899/pexels-photo-29566899.jpeg");}
+/* ---------- Page head ---------- */
 
-/* Any section that should overlap the bottom of the banner */
-.overlap { position: relative; z-index: 2; margin-top: calc(var(--space-16) * -1); }
+.page-head {
+  padding: var(--space-12) 0 var(--space-8);
+}
 
-.section-mosaic { padding-top: var(--space-8); }
+.page-title {
+  font-size: var(--fs-hero);
+  font-weight: var(--fw-bold);
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
 
-/* Filters */
+.page-head .section-sub {
+  margin-top: var(--space-3);
+  font-size: var(--fs-lg);
+}
+
+/* ---------- Filters ---------- */
+
 .filters {
-  padding: var(--space-4);
-  background: var(--bg-elevated);
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-medium);
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr auto;
-  gap: var(--space-4);
+  gap: var(--space-3);
   align-items: end;
-}
-
-/* Mosaic: fixed row height, cards span 2 or 3 rows, "dense" fills the gaps */
-.mosaic {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 130px;
-  grid-auto-flow: dense;
-  gap: var(--space-6);
-}
-
-/* Photo fills the whole card, info panel floats on top of it */
-.m-card {
-  position: relative;
-  grid-row: span 2;
-  overflow: hidden;
-  background: var(--bg-recessed);
+  padding: var(--space-4);
+  background: var(--bg-elevated);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-small);
 }
 
+.filters .field label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
 
-/* Pattern repeats every 7 cards and tiles a 3 x 6 block exactly, so there are no gaps.
-   Tall = 3 rows, the rest = 2 rows (set on .m-card above). */
-.m-card:nth-child(7n+1),
-.m-card:nth-child(7n+3),
-.m-card:nth-child(7n+5),
-.m-card:nth-child(7n+6) { grid-row: span 3; }
+.filter-actions {
+  display: flex;
+  gap: var(--space-2);
+}
 
-.m-image { position: absolute; inset: 0; }
-.m-image img { width: 100%; height: 100%; object-fit: cover; }
+/* ---------- Results ---------- */
 
-.m-placeholder {
-  position: absolute;
-  top: 38%;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 14px;
+.results {
+  padding-top: var(--space-8);
+}
+
+.results-meta {
+  margin-bottom: var(--space-6);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
   color: var(--text-muted);
 }
 
-.m-badge { position: absolute; top: var(--space-3); left: var(--space-3); }
-
-.m-body {
-  position: absolute;
-  left: var(--space-3);
-  right: var(--space-3);
-  bottom: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  background: rgba(255, 255, 255, 0.96);
-  border-radius: var(--radius);
-  box-shadow: var(--border);
+/* Empty state spans the whole 3-col grid */
+.empty-state--wide {
+  grid-column: 1 / -1;
 }
 
-.m-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.empty-state .icon-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: var(--space-3);
+  background: var(--bg-recessed);
+  border-radius: var(--radius-pill);
+}
+
+.empty-state h3 {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semibold);
+  letter-spacing: -0.02em;
+}
+
+.empty-state p {
+  margin: var(--space-2) 0 var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+/* ---------- Availability pill on the card photo ---------- */
+
+.car-image {
+  position: relative;
+}
+
+.car-status {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 28px;
+  padding: 0 var(--space-3);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: var(--radius-pill);
+}
+
+/* ---------- Lucide icons ---------- */
+
+.icon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 1.75;
+  vertical-align: -3px;
+}
+
+/* ---------- Responsive ---------- */
 
 @media (max-width: 960px) {
-  .mosaic { grid-template-columns: repeat(2, 1fr); }
-  .mosaic .m-card:nth-child(n) { grid-row: span 2; }
-  .filters { grid-template-columns: repeat(2, 1fr); }
-  .filters .btn { grid-column: 1 / -1; }
+  .filters {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filter-actions {
+    grid-column: 1 / -1;
+  }
+
+  .filter-actions .btn {
+    flex: 1;
+  }
 }
 
 @media (max-width: 640px) {
-  .mosaic { grid-template-columns: 1fr; }
-  .filters { grid-template-columns: 1fr; }
+  .page-head {
+    padding: var(--space-8) 0 var(--space-6);
+  }
+
+  .page-title {
+    font-size: var(--fs-2xl);
+  }
 }

@@ -4,21 +4,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f6f7f9">
   <title>{% block title %}FastCars | Car Rental{% endblock %}</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='10' fill='%232f4bff'/%3E%3Cpath d='M10.5 22l5-12M16.5 22l5-12' stroke='white' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
   <link rel="stylesheet" href="{% static 'css/cars_page.css' %}">
+  <link rel="stylesheet" href="{% static 'css/cars-details.css' %}">
   {% block extra_css %}{% endblock %}
 </head>
 <body>
 
   <header class="site-header">
     <div class="header-inner">
-      <a href="/" class="logo">FastCars</a>
+      <a href="/" class="logo" aria-label="FastCars home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="10" fill="currentColor"/><path d="M10.5 22l5-12M16.5 22l5-12" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/></svg>
+        <span>FastCars</span>
+      </a>
 
       <nav class="nav" aria-label="Main navigation">
         <a href="/" class="nav-link">Home</a>
@@ -30,12 +38,32 @@
       <div class="header-actions">
         {% if user.is_authenticated %}
           <a href="/bookings/history/" class="nav-link">My bookings</a>
-          <a href="/accounts/logout/" class="btn btn-secondary">Log out</a>
+          <form method="post" action="{% url 'accounts:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary btn-sm">Log out</button>
+          </form>
         {% else %}
           <a href="/accounts/login/" class="nav-link">Log in</a>
-          <a href="/accounts/register/" class="btn btn-primary">Register</a>
+          <a href="/accounts/register/" class="btn btn-primary btn-sm">Register</a>
         {% endif %}
       </div>
+
+      <details class="menu">
+        <summary aria-label="Menu"><i data-lucide="menu" class="icon"></i></summary>
+        <div class="menu-panel">
+          <a href="/">Home</a>
+          <a href="/vehicles/">Cars</a>
+          <a href="/about/">About</a>
+          <a href="/contact/">Contact</a>
+          {% if user.is_authenticated %}
+            <a href="/bookings/history/">My bookings</a>
+            <a href="/accounts/logout/">Log out</a>
+          {% else %}
+            <a href="/accounts/login/">Log in</a>
+            <a href="/accounts/register/">Register</a>
+          {% endif %}
+        </div>
+      </details>
     </div>
   </header>
 
@@ -46,7 +74,10 @@
   <footer class="site-footer">
     <div class="container footer-inner">
       <div>
-        <a href="/" class="logo">FastCars</a>
+        <a href="/" class="logo" aria-label="FastCars home">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="10" fill="currentColor"/><path d="M10.5 22l5-12M16.5 22l5-12" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/></svg>
+          <span>FastCars</span>
+        </a>
         <p class="footer-text">Simple, reliable car rental.</p>
       </div>
       <nav class="footer-nav" aria-label="Footer navigation">
@@ -59,5 +90,8 @@
     <p class="container copyright">&copy; {% now "Y" %} FastCars. All rights reserved.</p>
   </footer>
 
+  <script src="https://unpkg.com/lucide@0.454.0/dist/umd/lucide.min.js"></script>
+  <script>lucide.createIcons();</script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

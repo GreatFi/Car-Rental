@@ -1,111 +1,79 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block title %}Cars | FastCars{% endblock %}
 
 {% block content %}
 
-<!-- Short photo banner -->
-<section class="hero-photo page-banner">
-  <div class="container hero-content">
-    <h1>Our cars</h1>
-    <p class="hero-text">Pick a car, choose your dates, and book in minutes.</p>
+<section class="page-head">
+  <div class="container">
+    <h1 class="page-title">Our cars</h1>
+    <p class="section-sub">Pick a car, choose your dates and book in minutes.</p>
   </div>
 </section>
 
-<!-- Filters (overlap the bottom of the banner) -->
-<section class="overlap">
+<section class="filters-wrap">
   <div class="container">
-    <form class="filters" method="get">
-      <div class="field">
-        <label for="q">Search</label>
-        <input class="input" type="text" id="q" name="q" placeholder="Car name">
-      </div>
-      <div class="field">
-        <label for="brand">Brand</label>
-        <select class="input" id="brand" name="brand">
-          <option value="">All brands</option>
-          {% for brand in brands %}
-            <option value="{{ brand.id }}">{{ brand.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="field">
-        <label for="fuel">Fuel</label>
-        <select class="input" id="fuel" name="fuel">
-          <option value="">Any</option>
-          <option>Petrol</option>
-          <option>Diesel</option>
-          <option>Electric</option>
-          <option>Hybrid</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="seats">Seats</label>
-        <select class="input" id="seats" name="seats">
-          <option value="">Any</option>
-          <option value="2">2+</option>
-          <option value="4">4+</option>
-          <option value="7">7+</option>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-primary">Filter</button>
-    </form>
-  </div>
-</section>
-
-<!-- Car grid: same card markup and CSS as the homepage (.grid-3 / .car-card in style.css) -->
-<section class="section-mosaic">
-  <div class="container">
-    <div class="grid-3">
-
-      {% for vehicle in vehicles %}
-      <article class="car-card">
-        <div class="car-image">
-          {% if vehicle.image %}
-            <img src="{{ vehicle.image.url }}" alt="{{ vehicle.name }}">
-          {% else %}
-            No image
-          {% endif %}
-        </div>
-        <div class="car-body">
-          <div class="car-top">
-            <span class="car-brand">{{ vehicle.brand.name }}</span>
-            <span class="badge">
-              <span class="dot {% if not vehicle.is_available %}dot-red{% endif %}"></span>
-              {% if vehicle.is_available %}Available{% else %}Booked{% endif %}
-            </span>
-          </div>
-          <h3 class="car-name">{{ vehicle.name }}</h3>
-          <p class="car-specs">{{ vehicle.seats }} seats &middot; {{ vehicle.fuel_type }} &middot; {{ vehicle.model_year }}</p>
-          <div class="car-bottom">
-            <span class="price">${{ vehicle.price_per_day }}<small> / day</small></span>
-            <a href="/vehicles/{{ vehicle.id }}/" class="btn btn-secondary btn-sm">Details</a>
-          </div>
-        </div>
-      </article>
-
-      {% empty %}
-        {% for i in "123456" %}
-        <article class="car-card">
-          <div class="car-image"><img src="{% static 'images/cars/car-'|add:i|add:'.jpg' %}" alt=""></div>
-          <div class="car-body">
-            <div class="car-top">
-              <span class="car-brand">Brand</span>
-              <span class="badge"><span class="dot"></span> Available</span>
-            </div>
-            <h3 class="car-name">Car name</h3>
-            <p class="car-specs">5 seats &middot; Petrol &middot; 2024</p>
-            <div class="car-bottom">
-              <span class="price">$00<small> / day</small></span>
-              <a href="/vehicles/" class="btn btn-secondary btn-sm">Details</a>
-            </div>
-          </div>
-        </article>
-        {% endfor %}
-      {% endfor %}
-
+  <form class="filters" method="get" action="/vehicles/">
+    <div class="field">
+      <label for="q"><i data-lucide="search" class="icon"></i> Search</label>
+      <input class="input" type="text" id="q" name="q" placeholder="Car name" value="{{ request.GET.q }}">
     </div>
+    <div class="field">
+      <label for="brand"><i data-lucide="car-front" class="icon"></i> Brand</label>
+      <select class="input" id="brand" name="brand">
+        <option value="">All brands</option>
+        {% for brand in brands %}
+          <option value="{{ brand.id }}" {% if request.GET.brand == brand.id|stringformat:"s" %}selected{% endif %}>{{ brand.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="fuel"><i data-lucide="fuel" class="icon"></i> Fuel</label>
+      <select class="input" id="fuel" name="fuel">
+        <option value="">Any</option>
+        <option {% if request.GET.fuel == "Petrol" %}selected{% endif %}>Petrol</option>
+        <option {% if request.GET.fuel == "Diesel" %}selected{% endif %}>Diesel</option>
+        <option {% if request.GET.fuel == "Electric" %}selected{% endif %}>Electric</option>
+        <option {% if request.GET.fuel == "Hybrid" %}selected{% endif %}>Hybrid</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="seats"><i data-lucide="users" class="icon"></i> Seats</label>
+      <select class="input" id="seats" name="seats">
+        <option value="">Any</option>
+        <option value="2" {% if request.GET.seats == "2" %}selected{% endif %}>2+</option>
+        <option value="4" {% if request.GET.seats == "4" %}selected{% endif %}>4+</option>
+        <option value="7" {% if request.GET.seats == "7" %}selected{% endif %}>7+</option>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button type="submit" class="btn btn-primary">Filter</button>
+      {% if request.GET %}
+        <a href="/vehicles/" class="btn btn-secondary">Clear</a>
+      {% endif %}
+    </div>
+  </form>
+  </div>
+</section>
+
+<section class="results">
+  <div class="container">
+  {% if vehicles %}
+    <p class="results-meta">{{ vehicles|length }} car{{ vehicles|length|pluralize }}</p>
+  {% endif %}
+
+  <div class="grid-3">
+    {% for vehicle in vehicles %}
+      {% include "partials/car_card.html" with vehicle=vehicle show_status=True %}
+    {% empty %}
+      <div class="empty-state">
+        <span class="icon-chip"><i data-lucide="search-x" class="icon"></i></span>
+        <h3>No cars match your filters</h3>
+        <p>Try removing a filter, or browse the full fleet.</p>
+        <a href="/vehicles/" class="btn btn-secondary btn-sm">Clear filters</a>
+      </div>
+    {% endfor %}
+  </div>
   </div>
 </section>
 

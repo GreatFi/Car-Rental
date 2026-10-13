@@ -1,0 +1,60 @@
+/* ---------- Cars page ---------- */
+/* Shared pieces (.grid-3, .car-card, .field, .input, .empty-state) live in index.css. */
+
+.page-head { padding: var(--space-12) 0 var(--space-8); }
+.filters-wrap { padding: 0; }
+
+.page-title {
+  font-size: var(--fs-hero);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+.page-head .section-sub { margin-top: var(--space-3); font-size: var(--fs-lg); }
+
+/* Filters */
+.filters {
+  padding: var(--space-4);
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: var(--space-2);
+  align-items: end;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-small);
+}
+.filters .btn { height: 52px; }
+.filter-actions { display: flex; gap: var(--space-2); }
+
+/* Results */
+.results { padding: var(--space-8) 0 0; }
+.results-meta { margin-bottom: var(--space-6); font-size: var(--fs-sm); font-weight: 500; color: var(--text-muted); }
+
+/* Availability pill sits on the photo */
+.car-image { position: relative; }
+.car-status {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 var(--space-3);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: var(--radius-pill);
+}
+
+@media (max-width: 960px) {
+  .filters { grid-template-columns: repeat(2, 1fr); }
+  .filter-actions { grid-column: 1 / -1; }
+  .filter-actions .btn { flex: 1; }
+}
+
+@media (max-width: 640px) {
+  .page-head { padding: var(--space-8) 0 var(--space-6); }
+  .filters { grid-template-columns: 1fr; }
+}

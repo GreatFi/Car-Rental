@@ -1,0 +1,31 @@
+{% load humanize %}
+<a href="/vehicles/{{ vehicle.id }}/" class="car-card">
+  <div class="car-image">
+    {% if vehicle.image %}
+      <img src="{{ vehicle.image.url }}" alt="{{ vehicle.name }}" loading="lazy" decoding="async">
+    {% else %}
+      <i data-lucide="car-front" class="icon icon-lg"></i>
+    {% endif %}
+    {% if show_status %}
+      <span class="car-status">
+        <span class="dot {% if not vehicle.is_available %}dot-red{% endif %}"></span>
+        {% if vehicle.is_available %}Available{% else %}Booked{% endif %}
+      </span>
+    {% endif %}
+  </div>
+  <div class="car-body">
+    <div>
+      <span class="car-brand">{{ vehicle.brand.name }}</span>
+      <h3 class="car-name">{{ vehicle.name }}</h3>
+    </div>
+    <p class="car-specs">
+      <span><i data-lucide="users" class="icon"></i> {{ vehicle.seats }} seats</span>
+      <span><i data-lucide="fuel" class="icon"></i> {{ vehicle.fuel_type }}</span>
+      <span><i data-lucide="calendar" class="icon"></i> {{ vehicle.model_year }}</span>
+    </p>
+    <div class="car-bottom">
+      <span class="price">₦{{ vehicle.price_per_day|floatformat:0|intcomma }}<small> / day</small></span>
+      <span class="car-go"><i data-lucide="arrow-up-right" class="icon"></i></span>
+    </div>
+  </div>
+</a>

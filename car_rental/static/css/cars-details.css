@@ -1,0 +1,372 @@
+/* =========================================
+   VEHICLE DETAIL — new token system
+   (tokens.css → index.css → this file)
+   ========================================= */
+
+/* ---------- 1. Hero ---------- */
+
+.vd-hero {
+    position: relative;
+    padding: var(--space-24) 0 calc(var(--space-24) + var(--space-16));
+    color: #fff;
+    background-color: var(--text);
+    overflow: hidden;
+}
+
+.vd-hero__media,
+.vd-hero__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.vd-hero__media img { object-fit: cover; }
+
+.vd-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.vd-hero__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+}
+
+.vd-hero__title {
+    margin: 0;
+    max-width: 720px;
+    font-size: var(--fs-hero);
+    font-weight: var(--fw-semibold);
+    line-height: 1;
+    letter-spacing: -0.045em;
+}
+
+.vd-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: var(--fs-sm);
+}
+
+.vd-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.vd-hero__price { font-size: var(--fs-xl); font-weight: var(--fw-semibold); }
+.vd-hero__price small { font-size: var(--fs-sm); font-weight: var(--fw-regular); color: rgba(255, 255, 255, 0.7); }
+
+/* ---------- 2. Booking bar ---------- */
+
+.vd-booking-zone {
+    position: relative;
+    z-index: 2;
+    margin-top: calc(var(--space-16) * -1);
+    padding-top: 0;
+}
+
+.vd-booking {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: var(--space-4);
+    align-items: end;
+    padding: var(--space-6);
+    background: var(--bg-elevated);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-medium);
+}
+
+.vd-booking__price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-1);
+    padding: 0 var(--space-2);
+    white-space: nowrap;
+}
+
+.vd-booking__price strong { font-size: var(--fs-xl); font-weight: var(--fw-semibold); }
+.vd-booking__price span { font-size: var(--fs-xs); color: var(--text-secondary); }
+
+/* ---------- 3. Gallery ---------- */
+
+.vd-gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 170px;
+    gap: var(--space-3);
+}
+
+.vd-gallery__item {
+    display: block;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-small);
+}
+
+.vd-gallery__item--featured {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.vd-gallery__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 0.15s ease;
+}
+
+.vd-gallery__item:hover img { filter: brightness(1.05); }
+
+/* ---------- 4. Specifications ---------- */
+
+.vd-specs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-4);
+}
+
+.vd-spec {
+    padding: var(--space-6);
+    background: var(--bg-elevated);
+    border-radius: var(--radius-card);
+    box-shadow: var(--border);
+}
+
+.vd-spec__value {
+    display: block;
+    font-size: var(--fs-xl);
+    font-weight: var(--fw-semibold);
+    line-height: 1.25;
+    letter-spacing: -0.04em;
+}
+
+.vd-spec__label {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--fs-xs);
+    line-height: 1.35;
+    color: var(--text-muted);
+}
+
+/* ---------- 5. Description + features + panel ---------- */
+
+.vd-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: var(--space-10);
+    align-items: start;
+}
+
+.vd-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+    min-width: 0;
+}
+
+.vd-block-title {
+    margin: 0 0 var(--space-4);
+    font-size: var(--fs-2xl);
+    font-weight: var(--fw-semibold);
+    line-height: 1.2;
+    letter-spacing: -0.04em;
+}
+
+.vd-description {
+    max-width: 640px;
+    font-size: var(--fs-md);
+    line-height: 1.7;
+    color: var(--text-secondary);
+    white-space: pre-line;
+}
+
+.vd-features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+}
+
+.vd-feature {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--fs-sm);
+    background: var(--bg-elevated);
+    border-radius: var(--radius);
+    box-shadow: var(--border);
+}
+
+.vd-feature .icon { color: var(--status-green); flex-shrink: 0; }
+
+/* ---------- Rental side panel ---------- */
+
+.vd-panel {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-4));
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+    background: var(--bg-elevated);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-medium);
+}
+
+.vd-panel__title { font-size: var(--fs-lg); font-weight: var(--fw-semibold); letter-spacing: -0.02em; }
+
+.vd-panel__price { display: flex; align-items: baseline; gap: var(--space-1); }
+.vd-panel__price strong { font-size: 28px; font-weight: var(--fw-semibold); letter-spacing: -0.04em; }
+.vd-panel__price span { font-size: var(--fs-sm); color: var(--text-secondary); }
+
+.vd-panel__note { font-size: var(--fs-xs); line-height: 1.5; color: var(--text-muted); text-align: center; }
+
+.vd-panel__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin: 0;
+}
+
+.vd-panel__row {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    font-size: var(--fs-sm);
+}
+
+.vd-panel__row dt { color: var(--text-secondary); }
+.vd-panel__row dd { margin: 0; font-weight: var(--fw-medium); text-align: right; }
+
+/* ---------- Shared bits ---------- */
+
+.vd-section-label {
+    margin: 0 0 var(--space-3);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.btn-block { width: 100%; }
+
+.icon {
+    width: 16px;
+    height: 16px;
+    stroke-width: 1.75;
+    vertical-align: -3px;
+}
+
+/* Stars (lucide) */
+.star { color: var(--text-muted); }
+.star.is-filled { color: var(--status-orange); fill: currentColor; }
+
+/* ---------- 6. Reviews ---------- */
+
+.vd-reviews-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+}
+
+.vd-rating-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.vd-rating-summary__score { font-size: var(--fs-2xl); font-weight: var(--fw-bold); letter-spacing: -0.03em; }
+.vd-rating-summary__count { font-size: var(--fs-sm); color: var(--text-muted); }
+
+.vd-stars { display: inline-flex; gap: 2px; }
+.vd-stars .icon { width: 15px; height: 15px; }
+
+.vd-reviews {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+}
+
+.vd-review {
+    padding: var(--space-6);
+    background: var(--bg-elevated);
+    border-radius: var(--radius-card);
+    box-shadow: var(--border);
+}
+
+.vd-review__head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.vd-review__avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    background: var(--bg-recessed);
+    border-radius: var(--radius-pill);
+}
+
+.vd-review__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.vd-review__meta strong { font-size: var(--fs-sm); font-weight: var(--fw-medium); }
+
+.vd-review__date {
+    margin-left: auto;
+    font-size: var(--fs-xs);
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.vd-review__body {
+    font-size: var(--fs-sm);
+    line-height: 1.65;
+    color: var(--text-secondary);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 960px) {
+    .vd-booking { grid-template-columns: 1fr 1fr; }
+    .vd-booking .btn { grid-column: 1 / -1; }
+    .vd-specs { grid-template-columns: repeat(2, 1fr); }
+    .vd-content { grid-template-columns: 1fr; }
+    .vd-panel { position: static; }
+    .vd-reviews { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+    .vd-hero { padding: var(--space-16) 0 calc(var(--space-16) + var(--space-16)); }
+    .vd-hero__title { font-size: var(--fs-2xl); }
+    .vd-booking { grid-template-columns: 1fr; }
+    .vd-gallery { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 140px; }
+    .vd-features { grid-template-columns: 1fr; }
+    .vd-reviews-head { flex-direction: column; align-items: flex-start; gap: var(--space-4); }
+}
