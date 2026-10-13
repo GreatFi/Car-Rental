@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}My bookings | FastCars{% endblock %}
+
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/booking.css' %}">{% endblock %}
+
+{% block content %}
+<section class="container booking-wrap">
+
+  <header class="booking-head">
+    <h1 class="booking-title">My bookings</h1>
+    <p class="booking-sub">Track your reservations and their status.</p>
+  </header>
+
+  {# success message from the booking view, shown once then cleared #}
+  {% for message in messages %}
+    <div class="history-message">{{ message }}</div>
+  {% endfor %}
+
+  <div class="history-list">
+    {% for booking in bookings %}
+    <article class="history-card">
+
+      <div class="summary-thumb">
+        {% if booking.vehicle.image %}
+          <img src="{{ booking.vehicle.image.url }}" alt="{{ booking.vehicle.name }}">
+        {% else %}
+          <img src="{% static 'images/booking-fallback.jpg' %}" alt="">
+        {% endif %}
+      </div>
+
+      <div class="history-info">
+        <span class="summary-brand">{{ booking.vehicle.brand.name }}</span>
+        <h2 class="summary-name">{{ booking.vehicle.name }}</h2>
+        <p class="summary-specs">
+          <span>
+            <i data-lucide="calendar" class="icon"></i>
+            {{ booking.start_date|date:"j M Y" }} to {{ booking.end_date|date:"j M Y" }}
+          </span>
+          <span>{{ booking.days }} day{{ booking.days|pluralize }}</span>
+        </p>
+      </div>
+
+      <div class="history-side">
+        {# status-pending / status-confirmed / status-cancelled picks the dot colour #}
+        <span class="status status-{{ booking.status }}">
+          <span class="status-dot"></span>{{ booking.get_status_display }}
+        </span>
+        <strong class="history-total">₦{{ booking.total_price|floatformat:0|intcomma }}</strong>
+      </div>
+
+    </article>
+    {% empty %}
+    <div class="empty-state">You have no bookings yet.</div>
+    {% endfor %}
+  </div>
+
+</section>
+{% endblock %}

@@ -37,7 +37,7 @@
       <span class="vd-hero__price">
         &#8358;{{ vehicle.price_per_day|floatformat:0 }}<small> / day</small>
       </span>
-      <a href="#book" class="btn btn-light btn-lg">Rent this car</a>
+      <a href="{% url 'bookings:book' vehicle.id %}" class="btn btn-light btn-lg">Book now</a>
       <a href="/vehicles/" class="btn btn-ghost btn-lg">Back to cars</a>
     </div>
   </div>

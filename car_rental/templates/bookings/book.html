@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static humanize l10n %}
+
+{% block title %}Book {{ vehicle.name }} | FastCars{% endblock %}
+
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/booking.css' %}">{% endblock %}
+
+{% block content %}
+<section class="container booking-wrap">
+
+  <!-- Page head: breadcrumb + title + checkout steps -->
+  <header class="booking-head">
+    <a href="{% url 'car_details' vehicle.id %}" class="back-link">
+      <i data-lucide="arrow-left" class="icon"></i> Back to car
+    </a>
+
+    <h1 class="booking-title">Book {{ vehicle.brand.name }} {{ vehicle.name }}</h1>
+    <p class="booking-sub">Pick your dates to request this car. Free cancellation up to 24h before pick-up.</p>
+
+    <ol class="booking-steps" aria-label="Booking progress">
+      <li class="is-current"><span>1</span> Dates</li>
+      <li><span>2</span> Confirm</li>
+      <li><span>3</span> Done</li>
+    </ol>
+  </header>
+
+  <div class="booking">
+
+    <div class="booking-main">
+      <div class="booking-card">
+        <h2 class="booking-card__title">Trip details</h2>
+
+        <form method="post" class="booking-form" novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="form-alert" role="alert">
+              {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+            </div>
+          {% endif %}
+
+          {% for field in form %}
+            <div class="field{% if field.field.widget.input_type != 'date' %} field-wide{% endif %}{% if field.errors %} has-error{% endif %}">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+              {% if field.help_text %}<div class="field-help">{{ field.help_text|safe }}</div>{% endif %}
+            </div>
+          {% endfor %}
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-lg">Confirm booking</button>
+            <p class="form-note">You won't be charged yet — we confirm availability first.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <aside class="summary" aria-label="Booking summary">
+      <!-- Car chip: compact thumb + name (replaces the big stretched photo) -->
+      <div class="summary-car">
+        <div class="summary-thumb">
+          {% if vehicle.image %}
+            <img src="{{ vehicle.image.url }}" alt="{{ vehicle.name }}">
+          {% else %}
+            <img src="{% static 'images/booking-fallback.jpg' %}" alt="">
+          {% endif %}
+        </div>
+        <div class="summary-car__meta">
+          <span class="summary-brand">{{ vehicle.brand.name }}</span>
+          <h2 class="summary-name">{{ vehicle.name }}</h2>
+          <p class="summary-specs">
+            <span><i data-lucide="users" class="icon"></i> {{ vehicle.seats }}</span>
+            <span><i data-lucide="fuel" class="icon"></i> {{ vehicle.fuel_type }}</span>
+            <span><i data-lucide="calendar" class="icon"></i> {{ vehicle.model_year }}</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="summary-lines" data-price="{{ vehicle.price_per_day|unlocalize }}">
+        <div class="line">
+          <span>Daily rate</span>
+          <span>₦{{ vehicle.price_per_day|floatformat:0|intcomma }}</span>
+        </div>
+        <div class="line" id="days-line" hidden>
+          <span id="days-label"></span>
+          <span id="days-amount"></span>
+        </div>
+        <div class="line line-total">
+          <span>Estimated total</span>
+          <strong id="total">Select dates</strong>
+        </div>
+      </div>
+
+      <ul class="summary-perks">
+        <li><i data-lucide="shield-check" class="icon"></i> Free cancellation up to 24h before pick-up</li>
+        <li><i data-lucide="badge-check" class="icon"></i> Insured &amp; inspected vehicles</li>
+        <li><i data-lucide="headset" class="icon"></i> 24/7 roadside support</li>
+      </ul>
+
+      <p class="summary-note">We'll confirm your booking, and you can follow its status in My bookings.</p>
+    </aside>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/booking.js' %}" defer></script>{% endblock %}
