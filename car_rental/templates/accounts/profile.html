@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}Profile | FastCars{% endblock %}
+
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/profile.css' %}">{% endblock %}
+
+{% block content %}
+<section class="container prof">
+
+  <!-- Header: identity on the left, logout on the right -->
+  <header class="prof-head">
+    <div class="prof-who">
+      <span class="prof-avatar" aria-hidden="true">{{ user.full_name|slice:":1"|upper }}</span>
+      <div>
+        <h1 class="prof-title">{{ user.full_name }}</h1>
+        <p class="prof-sub">{{ user.email }} &middot; Member since {{ user.date_joined|date:"F Y" }}</p>
+      </div>
+    </div>
+
+    {# logout must be a POST form, a plain link gives a 405 #}
+    <form method="post" action="{% url 'accounts:logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-secondary btn-sm"><i data-lucide="log-out" class="icon"></i> Log out</button>
+    </form>
+  </header>
+
+  {% for message in messages %}
+    <div class="prof-message prof-message--{{ message.tags }}" role="status">
+      <i data-lucide="{% if 'error' in message.tags %}circle-alert{% else %}circle-check{% endif %}" class="icon"></i>
+      <span>{{ message }}</span>
+    </div>
+  {% endfor %}
+
+  <!-- Stats: the aggregate always returns numbers, so these show even at zero -->
+  <div class="prof-stats">
+    <div class="prof-stat"><span>Total bookings</span><strong>{{ stats.total }}</strong></div>
+    <div class="prof-stat"><span>Pending</span><strong>{{ stats.pending }}</strong></div>
+    <div class="prof-stat"><span>Confirmed</span><strong>{{ stats.confirmed }}</strong></div>
+  </div>
+
+  <div class="prof-grid">
+
+    <div class="prof-main">
+
+      <!-- Personal details -->
+      <section class="prof-card" aria-labelledby="details-title">
+        <div class="prof-card-head">
+          <h2 id="details-title">Personal details</h2>
+          <p>Keep your details up to date. Your phone number is also used to recover your password.</p>
+        </div>
+
+        <form method="post" class="prof-form">
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+            <div class="form-alert field-wide" role="alert">
+              {% for error in form.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+            </div>
+          {% endif %}
+
+          {# email is text only: it's the login identifier, not in the form #}
+          <div class="field field-wide">
+            <span class="field-label">Email</span>
+            <div class="readonly"><i data-lucide="lock" class="icon"></i> {{ request.user.email }}</div>
+            <p class="field-help">This is your login, so it can't be changed here.</p>
+          </div>
+
+          {% for field in form %}
+            <div class="field{% if field.errors %} has-error{% endif %}">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+            </div>
+          {% endfor %}
+
+          <div class="form-actions field-wide">
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Pending bookings -->
+      <section class="prof-card" aria-labelledby="pending-title">
+        <div class="prof-card-head prof-card-head--row">
+          <div>
+            <h2 id="pending-title">Pending bookings</h2>
+            <p>Waiting for confirmation.</p>
+          </div>
+          <a href="{% url 'bookings:history' %}" class="link">View all</a>
+        </div>
+
+        <div class="pb-list">
+          {% for booking in pending_bookings %}
+          <article class="pb">
+            <div class="pb-thumb">
+              {% if booking.vehicle.image %}
+                <img src="{{ booking.vehicle.image.url }}" alt="{{ booking.vehicle.name }}" loading="lazy" decoding="async">
+              {% else %}
+                <i data-lucide="car-front" class="icon"></i>
+              {% endif %}
+            </div>
+
+            <div class="pb-info">
+              <h3 class="pb-name">{{ booking.vehicle.brand.name }} {{ booking.vehicle.name }}</h3>
+              <p class="pb-dates">
+                {{ booking.start_date|date:"j M Y" }} &rarr; {{ booking.end_date|date:"j M Y" }}
+                &middot; {{ booking.days }} day{{ booking.days|pluralize }}
+              </p>
+            </div>
+
+            <strong class="pb-total">&#8358;{{ booking.total_price|floatformat:0|intcomma }}</strong>
+          </article>
+          {% empty %}
+          <div class="pb-empty">
+            <p>No pending bookings. Reservations waiting for confirmation will show up here.</p>
+            <a href="{% url 'car_page' %}" class="btn btn-secondary btn-sm">Browse cars</a>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Side column: account shortcuts -->
+    <aside class="prof-side" aria-label="Account">
+      <a href="{% url 'bookings:history' %}" class="prof-link">
+        <i data-lucide="calendar-check" class="icon"></i>
+        <span>My bookings</span>
+        <i data-lucide="chevron-right" class="icon prof-chevron"></i>
+      </a>
+      <a href="{% url 'accounts:password_change' %}" class="prof-link">
+        <i data-lucide="key-round" class="icon"></i>
+        <span>Change password</span>
+        <i data-lucide="chevron-right" class="icon prof-chevron"></i>
+      </a>
+    </aside>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/profile.js' %}" defer></script>{% endblock %}

@@ -69,3 +69,8 @@ class Vehicle(models.Model):
     @property
     def is_available(self):
         return self.is_available_today  # the badge on the cards uses this
+
+    @property
+    def gallery_images(self):
+        photos = (self.image, self.image_2, self.image_3, self.image_4, self.image_5)
+        return [photo for photo in photos if photo]

@@ -1,164 +1,143 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static humanize %}
 
 {% block title %}{{ vehicle.brand.name }} {{ vehicle.name }} | FastCars{% endblock %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{% static 'css/vehicle_detail.css' %}">
+  <link rel="stylesheet" href="{% static 'css/cars-details.css' %}">
 {% endblock %}
 
 {% block content %}
+{% with images=vehicle.gallery_images available=vehicle.is_available %}
+{% url 'bookings:book' vehicle.id as book_url %}
 
-<!-- Photo hero -->
-<section class="vd-hero">
-  {% if vehicle.image %}
-    <div class="vd-hero__media">
-      <img src="{{ vehicle.image.url }}" alt="{{ vehicle.brand.name }} {{ vehicle.name }}">
-    </div>
-  {% endif %}
-
-  <div class="container vd-hero__content">
-    {% comment %} <span class="badge badge-dark">
-      <span class="dot"></span>
-      Available for rent
-    </span> {% endcomment %}
-
-    <h1 class="vd-hero__title">{{ vehicle.brand.name }} {{ vehicle.name }}</h1>
-
-    <p class="vd-hero__meta">
-      <span>{{ vehicle.model_year }}</span>
-      <span aria-hidden="true">&middot;</span>
-      <span>{{ vehicle.fuel_type }}</span>
-      <span aria-hidden="true">&middot;</span>
-      <span>{{ vehicle.seats }} seats</span>
-    </p>
-
-    <div class="vd-hero__actions">
-      <span class="vd-hero__price">
-        &#8358;{{ vehicle.price_per_day|floatformat:0 }}<small> / day</small>
-      </span>
-      <a href="{% url 'bookings:book' vehicle.id %}" class="btn btn-light btn-lg">Book now</a>
-      <a href="/vehicles/" class="btn btn-ghost btn-lg">Back to cars</a>
+<!-- Title -->
+<section class="vd-head">
+  <div class="container">
+    <a href="/vehicles/" class="back-link"><i data-lucide="arrow-left" class="icon"></i> All cars</a>
+    <div class="vd-title-row">
+      <h1 class="vd-title">{{ vehicle.brand.name }} {{ vehicle.name }}</h1>
     </div>
   </div>
 </section>
 
-<!-- Booking bar: overlaps the bottom of the hero, like the cars-page filters -->
-<section class="section vd-booking-zone" id="book">
+<!-- Gallery: shows whichever of image, image2 ... image5 are filled in -->
+<section>
   <div class="container">
-    <form class="vd-booking" method="get" action="#">
-      <div class="field">
-        <label for="pickup">Pick-up date</label>
-        <input class="input" type="date" id="pickup" name="pickup">
-      </div>
-      <div class="field">
-        <label for="return">Return date</label>
-        <input class="input" type="date" id="return" name="return">
-      </div>
+    <div class="gallery gallery-{{ images|length }}">
+      {% for img in images %}
+        <button type="button" class="gallery-item" data-full="{{ img.url }}" aria-label="View photo {{ forloop.counter }} of {{ images|length }}">
+          <img src="{{ img.url }}"
+               alt="{{ vehicle.brand.name }} {{ vehicle.name }}, photo {{ forloop.counter }}"
+               {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
+               decoding="async">
+        </button>
+      {% empty %}
+        <div class="gallery-empty">
+          <i data-lucide="car-front" class="icon icon-lg"></i>
+          <p>Photos coming soon</p>
+        </div>
+      {% endfor %}
 
-      <p class="vd-booking__price">
-        <strong>&#8358;{{ vehicle.price_per_day|floatformat:0 }}</strong>
-        <span>/ day</span>
-      </p>
-
-      {% if user.is_authenticated %}
-        <button type="button" class="btn btn-primary btn-lg">Rent this car</button>
-      {% else %}
-        <a href="/accounts/login/?next={{ request.path|urlencode }}" class="btn btn-primary btn-lg">Log in to rent</a>
+      {% if images|length > 1 %}
+        <button type="button" class="gallery-all"><i data-lucide="images" class="icon"></i> View all photos</button>
       {% endif %}
-    </form>
-  </div>
-</section>
-
-<!-- Specifications -->
-<section class="section">
-  <div class="container">
-    <div class="vd-specs">
-      <div class="vd-spec">
-        <span class="vd-spec__value">{{ vehicle.model_year }}</span>
-        <span class="vd-spec__label">Model year</span>
-      </div>
-      <div class="vd-spec">
-        <span class="vd-spec__value">{{ vehicle.seats }}</span>
-        <span class="vd-spec__label">Seats</span>
-      </div>
-      <div class="vd-spec">
-        <span class="vd-spec__value">{{ vehicle.fuel_type }}</span>
-        <span class="vd-spec__label">Fuel type</span>
-      </div>
-      <div class="vd-spec">
-        <span class="vd-spec__value">&#8358;{{ vehicle.price_per_day|floatformat:0 }}</span>
-        <span class="vd-spec__label">Daily rate</span>
-      </div>
     </div>
   </div>
 </section>
 
-<!-- Description + rental panel -->
-<section class="section">
-  <div class="container vd-content">
-    <div>
-      <p class="vd-section-label">The vehicle</p>
-      <h2 class="vd-description-title">Ready for the road.</h2>
-      <p class="vd-description">
-        {% if vehicle.description %}
-          {{ vehicle.description|linebreaksbr }}
-        {% else %}
-          Discover this vehicle and make it part of your next journey.
-          Contact us if you need more information before making your choice.
-        {% endif %}
-      </p>
+<!-- Details + rental panel -->
+<section>
+  <div class="container vd-body">
+
+    <div class="vd-main">
+      <div class="vd-specs">
+        <div class="vd-spec">
+          <i data-lucide="calendar" class="icon"></i>
+          <span class="vd-spec-label">Model year</span>
+          <span class="vd-spec-value">{{ vehicle.model_year }}</span>
+        </div>
+        <div class="vd-spec">
+          <i data-lucide="users" class="icon"></i>
+          <span class="vd-spec-label">Seats</span>
+          <span class="vd-spec-value">{{ vehicle.seats }}</span>
+        </div>
+        <div class="vd-spec">
+          <i data-lucide="fuel" class="icon"></i>
+          <span class="vd-spec-label">Fuel type</span>
+          <span class="vd-spec-value">{{ vehicle.fuel_type }}</span>
+        </div>
+        <div class="vd-spec">
+          <i data-lucide="car-front" class="icon"></i>
+          <span class="vd-spec-label">Brand</span>
+          <span class="vd-spec-value">{{ vehicle.brand.name }}</span>
+        </div>
+      </div>
+
+      <div class="vd-block">
+        <h2>About this car</h2>
+        <p class="vd-description">
+          {% if vehicle.description %}
+            {{ vehicle.description|linebreaksbr }}
+          {% else %}
+            Discover this vehicle and make it part of your next journey.
+            Contact us if you need more information before making your choice.
+          {% endif %}
+        </p>
+      </div>
+
+      {% if vehicle.features_list %}
+      <div class="vd-block">
+        <h2>Features</h2>
+        <ul class="vd-features">
+          {% for feature in vehicle.features_list %}
+            <li><span class="check"><i data-lucide="check" class="icon"></i></span> {{ feature }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
     </div>
 
     <aside class="vd-panel">
-      <h3 class="vd-panel__title">Make it yours.</h3>
-
-      <p class="vd-panel__price">
-        <strong>&#8358;{{ vehicle.price_per_day|floatformat:0 }}</strong>
-        <span>/ day</span>
+      <p class="vd-panel-price">
+        <strong>₦{{ vehicle.price_per_day|floatformat:0|intcomma }}</strong><span> / day</span>
       </p>
 
+      {# builds the booking URL here, so the view doesn't need to pass book_url #}
+      {% url 'bookings:book' vehicle.id as book_url %}
+
       {% if user.is_authenticated %}
-        <button type="button" class="btn btn-primary btn-lg btn-block">Rent this car</button>
-        <p class="vd-panel__note">Online booking is coming soon.</p>
+        <a href="{{ book_url }}" class="btn btn-primary btn-lg">Book now</a>
       {% else %}
-        <a href="/accounts/login/?next={{ request.path|urlencode }}" class="btn btn-primary btn-lg btn-block">Log in to rent</a>
-        <p class="vd-panel__note">Log in to continue with your rental.</p>
+        <a href="{% url 'accounts:login' %}?next={{ book_url|urlencode }}" class="btn btn-primary btn-lg">Log in to book</a>
       {% endif %}
 
-      <dl class="vd-panel__list">
-        <div class="vd-panel__row">
-          <dt>Vehicle</dt>
-          <dd>{{ vehicle.brand.name }} {{ vehicle.name }}</dd>
-        </div>
-        <div class="vd-panel__row">
-          <dt>Year</dt>
-          <dd>{{ vehicle.model_year }}</dd>
-        </div>
-        <div class="vd-panel__row">
-          <dt>Fuel</dt>
-          <dd>{{ vehicle.fuel_type }}</dd>
-        </div>
-        <div class="vd-panel__row">
-          <dt>Seats</dt>
-          <dd>{{ vehicle.seats }}</dd>
-        </div>
-      </dl>
+      {% if vehicle.is_available_today %}
+        <p class="vd-panel-note">Available today. Pick your dates on the next page.</p>
+      {% else %}
+        <p class="vd-panel-note">Booked today, but other dates may be free. Pick yours on the next page.</p>
+      {% endif %}
+
+      {% if not user.is_authenticated %}
+        <p class="vd-panel-note">You need an account to book. It takes under a minute.</p>
+      {% endif %}
+
+      <p class="vd-panel-help">Questions about this car? <a href="/contact/" class="link">Contact us</a></p>
     </aside>
+
   </div>
 </section>
 
-<!-- Closing CTA: reuses the dark .cta block from index.css -->
-<section class="section">
-  <div class="container">
-    <div class="cta">
-      <div>
-        <h2 class="cta-title">Your next destination awaits.</h2>
-        <p class="cta-text">Find the right vehicle for the journey ahead.</p>
-      </div>
-      <a href="/vehicles/" class="btn btn-light btn-lg">Browse all cars</a>
-    </div>
-  </div>
-</section>
+<!-- Photo viewer -->
+<dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+  <button type="button" class="lb-btn lb-close" aria-label="Close"><i data-lucide="x" class="icon"></i></button>
+  <button type="button" class="lb-btn lb-prev" aria-label="Previous photo"><i data-lucide="chevron-left" class="icon"></i></button>
+  <img class="lb-img" alt="">
+  <button type="button" class="lb-btn lb-next" aria-label="Next photo"><i data-lucide="chevron-right" class="icon"></i></button>
+  <p class="lb-count" aria-live="polite"></p>
+</dialog>
 
+{% endwith %}
 {% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/car_details.js' %}" defer></script>{% endblock %}

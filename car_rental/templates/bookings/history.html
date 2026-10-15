@@ -3,58 +3,102 @@
 
 {% block title %}My bookings | FastCars{% endblock %}
 
-{% block extra_css %}<link rel="stylesheet" href="{% static 'css/booking.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/booking_history.css' %}">{% endblock %}
 
 {% block content %}
-<section class="container booking-wrap">
+<section class="hist">
+  <div class="container">
 
-  <header class="booking-head">
-    <h1 class="booking-title">My bookings</h1>
-    <p class="booking-sub">Track your reservations and their status.</p>
-  </header>
-
-  {# success message from the booking view, shown once then cleared #}
-  {% for message in messages %}
-    <div class="history-message">{{ message }}</div>
-  {% endfor %}
-
-  <div class="history-list">
-    {% for booking in bookings %}
-    <article class="history-card">
-
-      <div class="summary-thumb">
-        {% if booking.vehicle.image %}
-          <img src="{{ booking.vehicle.image.url }}" alt="{{ booking.vehicle.name }}">
-        {% else %}
-          <img src="{% static 'images/booking-fallback.jpg' %}" alt="">
-        {% endif %}
+    <header class="hist-head">
+      <div>
+        <h1 class="hist-title">My bookings</h1>
+        <p class="hist-sub">Track your reservations and their status.</p>
       </div>
+      <a href="{% url 'car_page' %}" class="btn btn-secondary btn-sm">Browse cars</a>
+    </header>
 
-      <div class="history-info">
-        <span class="summary-brand">{{ booking.vehicle.brand.name }}</span>
-        <h2 class="summary-name">{{ booking.vehicle.name }}</h2>
-        <p class="summary-specs">
-          <span>
-            <i data-lucide="calendar" class="icon"></i>
-            {{ booking.start_date|date:"j M Y" }} to {{ booking.end_date|date:"j M Y" }}
+    {# success message from the booking view, shown once then cleared #}
+    {% if messages %}
+      <div class="hist-messages" role="status" aria-live="polite">
+        {% for message in messages %}
+          <div class="hist-message hist-message--{{ message.tags }}">
+            {% if 'success' in message.tags %}<i data-lucide="circle-check" class="icon"></i>
+            {% elif 'error' in message.tags %}<i data-lucide="circle-alert" class="icon"></i>
+            {% elif 'warning' in message.tags %}<i data-lucide="triangle-alert" class="icon"></i>
+            {% else %}<i data-lucide="info" class="icon"></i>{% endif %}
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if bookings %}
+      {# filter tabs: hidden until history.js builds the counts #}
+      <div class="hist-tabs" role="group" aria-label="Filter bookings by status" hidden>
+        <button type="button" class="hist-tab is-active" data-filter="all" aria-pressed="true">All <span class="hist-count"></span></button>
+        <button type="button" class="hist-tab" data-filter="pending" aria-pressed="false">Pending <span class="hist-count"></span></button>
+        <button type="button" class="hist-tab" data-filter="confirmed" aria-pressed="false">Confirmed <span class="hist-count"></span></button>
+        <button type="button" class="hist-tab" data-filter="cancelled" aria-pressed="false">Cancelled <span class="hist-count"></span></button>
+      </div>
+    {% endif %}
+
+    <div class="hist-list">
+      {% for booking in bookings %}
+      <article class="hist-card" data-status="{{ booking.status|lower }}">
+
+        <div class="hist-thumb">
+          {% if booking.vehicle.image %}
+            <img src="{{ booking.vehicle.image.url }}" alt="{{ booking.vehicle.name }}" loading="lazy" decoding="async">
+          {% else %}
+            <i data-lucide="car-front" class="icon icon-lg"></i>
+          {% endif %}
+        </div>
+
+        <div class="hist-car">
+          <span class="hist-ref">Booking #{{ booking.pk }}</span>
+          <h2 class="hist-name">{{ booking.vehicle.brand.name }} {{ booking.vehicle.name }}</h2>
+          <a href="/vehicles/{{ booking.vehicle.id }}/" class="hist-link">View car <i data-lucide="arrow-up-right" class="icon"></i></a>
+        </div>
+
+        <div class="hist-trip">
+          <div class="hist-date">
+            <span class="hist-label">Pick-up</span>
+            <strong>{{ booking.start_date|date:"j M Y" }}</strong>
+          </div>
+          <div class="hist-span"><span class="hist-days">{{ booking.days }} day{{ booking.days|pluralize }}</span></div>
+          <div class="hist-date">
+            <span class="hist-label">Return</span>
+            <strong>{{ booking.end_date|date:"j M Y" }}</strong>
+          </div>
+        </div>
+
+        <div class="hist-side">
+          {# status-{{ status }} picks the dot colour; |lower guards against case drift #}
+          <span class="hist-status hist-status--{{ booking.status|lower }}">
+            <span class="hist-dot"></span>{{ booking.get_status_display }}
           </span>
-          <span>{{ booking.days }} day{{ booking.days|pluralize }}</span>
-        </p>
-      </div>
+          <div class="hist-total">
+            <span class="hist-label">Total</span>
+            <strong>&#8358;{{ booking.total_price|floatformat:0|intcomma }}</strong>
+          </div>
+        </div>
 
-      <div class="history-side">
-        {# status-pending / status-confirmed / status-cancelled picks the dot colour #}
-        <span class="status status-{{ booking.status }}">
-          <span class="status-dot"></span>{{ booking.get_status_display }}
-        </span>
-        <strong class="history-total">₦{{ booking.total_price|floatformat:0|intcomma }}</strong>
-      </div>
+      </article>
 
-    </article>
-    {% empty %}
-    <div class="empty-state">You have no bookings yet.</div>
-    {% endfor %}
+      {% empty %}
+      <div class="empty-state">
+        <span class="icon-chip"><i data-lucide="calendar-x" class="icon"></i></span>
+        <h3>No bookings yet</h3>
+        <p>When you rent a car, your reservations will show up here.</p>
+        <a href="{% url 'car_page' %}" class="btn btn-primary btn-sm">Browse cars</a>
+      </div>
+      {% endfor %}
+
+      <p class="hist-none" hidden>No bookings with this status.</p>
+    </div>
+
   </div>
-
 </section>
 {% endblock %}
+
+{% block extra_js %}<script src="{% static 'js/booking_history.js' %}" defer></script>{% endblock %}

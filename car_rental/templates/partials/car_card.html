@@ -6,12 +6,6 @@
     {% else %}
       <i data-lucide="car-front" class="icon icon-lg"></i>
     {% endif %}
-    {% if show_status %}
-      <span class="car-status">
-        <span class="dot {% if not vehicle.is_available %}dot-red{% endif %}"></span>
-        {% if vehicle.is_available %}Available{% else %}Booked{% endif %}
-      </span>
-    {% endif %}
   </div>
   <div class="car-body">
     <div>
