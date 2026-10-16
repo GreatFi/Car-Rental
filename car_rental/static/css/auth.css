@@ -57,7 +57,7 @@ a:focus-visible, button:focus-visible { outline: none; box-shadow: var(--focus-r
   border-radius: 28px;
   overflow: hidden;
   color: #fff;
-  background: #1b2233 url("https://images.unsplash.com/photo-1729372576176-1d5a09f73ac8?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D") center / cover no-repeat;
+  background: #1b2233 url("../images/hero.jpg") center / cover no-repeat;
 }
 
 .auth-media::before {
@@ -100,6 +100,16 @@ a:focus-visible, button:focus-visible { outline: none; box-shadow: var(--focus-r
 
 .field { display: flex; flex-direction: column; gap: 6px; }
 .field label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.field-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.forgot { font-size: 13px; font-weight: 600; color: var(--brand); border-radius: 6px; }
+.forgot:hover { color: var(--brand-hover); text-decoration: underline; text-underline-offset: 3px; }
+
+/* Messages from other views (password reset, logged out, ...) */
+.auth-messages { margin-top: 20px; display: grid; gap: 8px; }
+.auth-message { padding: 12px 14px; font-size: 14px; font-weight: 500; color: #1c2fb8; background: #ebeeff; border-radius: 14px; }
+.auth-message--success { color: #1b6b3a; background: #e8f6ee; }
+.auth-message--error { color: #9b2226; background: #fdecec; }
+.auth-message--warning { color: #8a5a00; background: #fff4e0; }
 
 /* Django renders bare widgets, so style them by element (no forms.py changes needed) */
 .auth-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
@@ -123,32 +133,10 @@ a:focus-visible, button:focus-visible { outline: none; box-shadow: var(--focus-r
 
 .auth-form input:focus,
 .auth-form select:focus,
-.auth-form textarea:focus { outline: var(--brand); background: var(--surface); box-shadow: 0 0 0 2px var(--brand); }
+.auth-form textarea:focus { outline: none; background: var(--surface); box-shadow: 0 0 0 2px var(--brand); }
 
 .has-error input,
 .has-error select { box-shadow: 0 0 0 2px var(--error); }
-
-/* Password show/hide (added by auth.js) */
-.pw { position: relative; }
-.pw input { padding-right: 48px; }
-.pw-toggle {
-  position: absolute;
-  top: 50%;
-  right: 4px;
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  margin-top: -20px;
-  padding: 0;
-  color: var(--text-muted);
-  background: transparent;
-  border: 0;
-  border-radius: 10px;
-  cursor: pointer;
-}
-.pw-toggle:hover { color: var(--text); background: rgba(20, 24, 43, 0.06); }
-.pw-toggle svg { width: 18px; height: 18px; }
 
 .field-error { font-size: 13px; font-weight: 500; color: var(--error); }
 

@@ -1,4 +1,5 @@
 {% load static %}
+{% url 'accounts:recover_password' as recover_url %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+  <link rel="stylesheet" href="{% static 'css/recover_password.css' %}">
 </head>
 <body>
   <div class="auth">
@@ -36,6 +38,12 @@
         <h1 class="auth-title">Welcome back</h1>
         <p class="auth-sub">Log in to manage your bookings.</p>
 
+        {% if messages %}
+          <div class="auth-messages" role="status" aria-live="polite">
+            {% for message in messages %}<p class="auth-message auth-message--{{ message.tags }}">{{ message }}</p>{% endfor %}
+          </div>
+        {% endif %}
+
         <form method="post" class="auth-form">
           {% csrf_token %}
           {# keeps the ?next= target alive across the POST #}
@@ -49,7 +57,10 @@
 
           {% for field in form %}
             <div class="field{% if field.errors %} has-error{% endif %}">
-              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              <div class="field-top">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {% if field.field.widget.input_type == 'password' and recover_url %}<a href="{{ recover_url }}" class="forgot">Forgot password?</a>{% endif %}
+              </div>
               {{ field }}
               {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
               {% if field.help_text %}<div class="field-help">{{ field.help_text|safe }}</div>{% endif %}
